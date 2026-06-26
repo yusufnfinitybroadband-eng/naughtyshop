@@ -9,13 +9,7 @@ const LOGO = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Logo_9b05c0
 const BANNER = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/banner2.png?v=1782295395";
 const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout";
 
-const VARIANT_IDS = {
-  6: "45973012250703",
-  7: "45973012316239",
-  8: "45973012349007",
-  9: "45973017002063",
-  11: "45973017034831"
-};
+const VARIANT_IDS = {6:"45973012250703",7:"45973012316239",8:"45973012349007",9:"45973017002063",11:"45973017034831"};
 
 const REVIEWS = [
   {name:"Rahul Sharma",rating:5,verified:true,text:"Bhai ekdum mast product hai, delivery bhi bahut fast thi. Packaging bilkul plain thi. Highly recommend karta hun!",time:"2 din pehle"},
@@ -28,273 +22,257 @@ const REVIEWS = [
   {name:"Rajesh Patel",rating:5,verified:true,text:"Yaar ye product ne life change kar di. Quality bahut solid hai. Pakka 5 star.",time:"1 mahina pehle"},
   {name:"Sanjay Mishra",rating:4,verified:true,text:"Product bahut accha hai. Silicone material ekdum soft aur realistic hai.",time:"1 mahina pehle"},
   {name:"Arjun Nair",rating:5,verified:true,text:"Ordered the 9 inch variant. Absolutely love it. 100% satisfied!",time:"1 mahina pehle"},
-  {name:"Pradeep Joshi",rating:5,verified:true,text:"Bhai COD ka option tha isliye trust hua. Product real mein bahut acha nikla.",time:"6 hafte pehle"},
-  {name:"Gaurav Shukla",rating:5,verified:true,text:"Sahi mein paise wasool product hai. Stamina wala fayda amazing hai.",time:"5 hafte pehle"},
-  {name:"Hemant Dubey",rating:5,verified:true,text:"Itne din se dhoondh raha tha aisa product. Quality ekdum first class hai.",time:"7 hafte pehle"},
-  {name:"Naresh Verma",rating:5,verified:true,text:"11 inch wala manga tha, aaya bhi wahi. Stamina mein fark clearly dikh raha hai.",time:"2 mahine pehle"},
-  {name:"Santosh Yadav",rating:5,verified:true,text:"Superb quality hai bhai. Amazon pe nahi mila, yahan se mila aur quality bhi better hai.",time:"2 mahine pehle"},
 ];
 
-function getPageHTML(defaultSize = "8") {
-  const dp  = defaultSize === "11" ? 2749 : 1978;
-  const dm  = defaultSize === "11" ? 5499 : 3999;
-  const dof = Math.round((1 - dp / dm) * 100);
-  const dpr = Math.round(dp * 0.75);
-  const sl  = defaultSize === "8" ? "8 Inch (Most Popular)" : defaultSize === "11" ? "11 Inch (Biggest Size)" : `${defaultSize} Inch`;
-
-  return `<!DOCTYPE html>
+function getPageHTML(defaultSize="8"){
+  const dp=defaultSize==="11"?2749:1978,dm=defaultSize==="11"?5499:3999,dof=Math.round((1-dp/dm)*100),dpr=Math.round(dp*0.75);
+  
+  return`<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>King Sleeve Pro | NaughtyShop</title>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>King Sleeve Pro | NaughtyShop</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:linear-gradient(135deg,#0a0a0a 0%,#1a0a0a 100%);color:#f0ece4;font-family:'Inter','-apple-system',sans-serif;line-height:1.6}
-.nav{background:rgba(8,8,8,0.98);backdrop-filter:blur(10px);padding:0 24px;border-bottom:1px solid rgba(192,0,26,0.3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;height:64px}
+body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-height:1.6;overflow-x:hidden}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+.nav{background:rgba(8,8,8,0.98);padding:16px 24px;border-bottom:1px solid rgba(192,0,26,0.3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .nav-logo{height:40px;object-fit:contain}
-.nav-btn{background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;padding:12px 28px;font-size:11px;font-weight:800;cursor:pointer;border-radius:6px;transition:all 0.3s}
-.nav-btn:hover{transform:translateY(-2px)}
-.hero{position:relative;width:100%;height:480px;overflow:hidden;display:flex;align-items:center}
+.nav-btn{background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;padding:10px 24px;font-weight:800;cursor:pointer;border-radius:6px;transition:all 0.3s;font-size:12px}
+.nav-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,0,26,0.4)}
+.hero{position:relative;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:fadeInUp 0.8s ease}
 .hero-bg{position:absolute;inset:0;object-fit:cover}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,8,0.95) 0%,rgba(8,8,8,0.5) 50%,rgba(8,8,8,0) 100%)}
-.hero-content{position:relative;z-index:2;padding:0 48px;max-width:620px}
-.hero-title{font-size:64px;font-weight:900;color:#fff;margin-bottom:16px;text-shadow:0 4px 20px rgba(0,0,0,0.5)}
-.hero-title span{background:linear-gradient(135deg,#ff0033,#ff6666);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:16px;color:rgba(240,236,228,0.7);line-height:1.8;margin-bottom:32px}
-.hero-buy-btn{background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;padding:18px 48px;font-weight:800;cursor:pointer;border-radius:8px}
-.pg-main{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(192,0,26,0.2)}
-.pg-images{padding:32px;background:rgba(15,15,15,0.5);border-right:1px solid rgba(192,0,26,0.2);position:sticky;top:64px;height:fit-content}
-.pg-carousel{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:12px;background:#111;border:1px solid rgba(192,0,26,0.2);touch-action:pan-y}
-.pg-main-img{width:100%;height:100%;object-fit:cover;cursor:grab;user-select:none}
-.pg-thumbs{display:flex;gap:10px;margin-top:16px}
-.pg-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;border:3px solid transparent;cursor:pointer;filter:brightness(0.7);transition:all 0.3s}
-.pg-thumb.active{border-color:#ff0033;filter:brightness(1)}
-.pg-details{padding:36px 40px 60px;background:linear-gradient(135deg,rgba(15,15,15,0.8) 0%,rgba(20,10,10,0.6) 100%);overflow-y:auto;max-height:calc(100vh - 64px)}
-.pg-title{font-size:24px;font-weight:800;color:#fff;margin-bottom:8px}
-.pg-meta{font-size:13px;color:rgba(240,236,228,0.4);margin-bottom:20px}
-.pg-price-row{display:flex;gap:12px;align-items:baseline;margin:20px 0}
-.pg-price{font-size:44px;font-weight:900;color:#fff}
-.pg-price-mrp{font-size:16px;color:rgba(240,236,228,0.25);text-decoration:line-through}
-.pg-price-off{color:#4ade80;font-weight:800}
-.pg-prepaid{font-size:13px;color:#4ade80;margin-bottom:16px;padding:12px;background:rgba(34,197,94,0.08);border-left:3px solid #4ade80;border-radius:4px}
-.size-box{margin:16px 0;padding:16px;background:rgba(192,0,26,0.1);border:2px solid #ff0033;border-radius:8px}
-.size-label{font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;display:block}
-.pg-sizes{display:flex;gap:10px;flex-wrap:wrap}
-.pg-size-btn{padding:12px 22px;border-radius:8px;font-weight:700;cursor:pointer;border:2px solid rgba(192,0,26,0.3);background:transparent;color:rgba(240,236,228,0.6);transition:all 0.3s;font-size:14px;text-transform:uppercase}
-.pg-size-btn:hover{border-color:#ff0033;color:#ff0033}
-.pg-size-btn.active{border-color:#ff0033;color:#fff;background:linear-gradient(135deg,rgba(192,0,26,0.3),rgba(192,0,26,0.15));box-shadow:0 4px 15px rgba(192,0,26,0.2)}
-.pg-buy-btn{width:100%;padding:20px;background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;font-size:17px;font-weight:900;cursor:pointer;border-radius:10px;margin:24px 0}
-.short-desc{font-size:15px;color:rgba(240,236,228,0.6);margin:20px 0;padding:16px;background:rgba(192,0,26,0.08);border-left:3px solid #ff0033;border-radius:4px}
-.toggle-link{color:#ff4444;cursor:pointer;font-weight:700;display:block;margin-top:12px}
-.detailed-desc{display:none;margin:20px 0;padding:20px;background:rgba(192,0,26,0.05);border-radius:8px;line-height:1.8}
-.detailed-desc.show{display:block}
-.review-box{margin-top:40px;padding:20px;background:rgba(192,0,26,0.08);border:1px solid rgba(192,0,26,0.2);border-radius:10px}
-.review-box h3{color:#fff;margin-bottom:16px;font-size:16px}
-.review-input{width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(192,0,26,0.2);border-radius:6px;color:#fff;font-family:inherit;margin-bottom:12px}
-.review-input::placeholder{color:rgba(240,236,228,0.3)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,8,0.95),rgba(8,8,8,0.5),transparent)}
+.hero-content{position:relative;z-index:2;max-width:500px;padding:0 40px;text-align:left}
+.hero-title{font-size:56px;font-weight:900;margin-bottom:16px}
+.hero-title span{color:#ff0033}
+.hero-sub{font-size:15px;color:rgba(240,236,228,0.7);margin-bottom:24px}
+.hero-btn{background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;padding:14px 40px;font-weight:800;cursor:pointer;border-radius:6px;transition:all 0.3s}
+.hero-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(192,0,26,0.4)}
+.container{max-width:900px;margin:0 auto;padding:40px 20px}
+.section{animation:fadeInUp 0.8s ease;margin-bottom:40px}
+.section h2{font-size:20px;font-weight:800;margin-bottom:20px;color:#fff}
+.img-slider{position:relative;border-radius:12px;overflow:hidden;background:#111;margin-bottom:16px;aspect-ratio:1/1.2;animation:slideInRight 0.8s ease}
+.main-img{width:100%;height:100%;object-fit:cover;cursor:grab}
+.thumbs{display:flex;gap:12px;overflow-x:auto;padding:8px 0}
+.thumb{width:70px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer;border:3px solid transparent;transition:all 0.3s;opacity:0.6}
+.thumb.active{border-color:#ff0033;opacity:1}
+.thumb:hover{opacity:1}
+.price-section{background:rgba(192,0,26,0.08);padding:20px;border-radius:10px;margin-bottom:20px;border-left:4px solid #ff0033;animation:slideInRight 0.8s ease 0.1s both}
+.price-row{display:flex;gap:12px;align-items:baseline;margin-bottom:8px}
+.price-big{font-size:40px;font-weight:900;color:#fff}
+.price-old{font-size:16px;color:rgba(240,236,228,0.25);text-decoration:line-through}
+.price-off{color:#4ade80;font-weight:800;font-size:14px}
+.prepaid-note{font-size:13px;color:#4ade80;margin-top:12px;padding:12px;background:rgba(34,197,94,0.08);border-radius:6px}
+.sizes-box{background:rgba(192,0,26,0.1);padding:20px;border-radius:10px;margin-bottom:20px;border:2px solid #ff0033;animation:slideInRight 0.8s ease 0.2s both}
+.sizes-label{font-size:13px;font-weight:700;color:#fff;margin-bottom:12px}
+.sizes{display:flex;gap:10px;flex-wrap:wrap}
+.size-btn{padding:10px 18px;border:2px solid rgba(192,0,26,0.3);background:transparent;color:rgba(240,236,228,0.6);font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s;font-size:13px;text-transform:uppercase}
+.size-btn:hover{border-color:#ff0033;color:#ff0033}
+.size-btn.active{border-color:#ff0033;background:linear-gradient(135deg,rgba(192,0,26,0.3),rgba(192,0,26,0.15));color:#fff;box-shadow:0 4px 12px rgba(192,0,26,0.2);animation:pulse 0.3s ease}
+.buy-btn{width:100%;padding:18px;background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;font-size:16px;font-weight:900;cursor:pointer;border-radius:8px;transition:all 0.3s;margin-bottom:20px;text-transform:uppercase;letter-spacing:1px;animation:slideInRight 0.8s ease 0.3s both}
+.buy-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(192,0,26,0.4)}
+.buy-btn:active{transform:translateY(-1px)}
+.desc-box{background:rgba(192,0,26,0.05);padding:20px;border-radius:10px;line-height:1.8;color:rgba(240,236,228,0.7);animation:fadeInUp 0.8s ease 0.4s both}
+.desc-box h3{color:#fff;margin-bottom:12px;font-size:15px}
+.desc-box p{margin-bottom:12px;font-size:14px}
+.desc-box ul{margin-left:20px;margin-bottom:12px}
+.desc-box li{margin-bottom:8px;font-size:14px}
+.review-write{background:rgba(192,0,26,0.08);padding:20px;border-radius:10px;margin-bottom:20px;border:1px solid rgba(192,0,26,0.2);animation:fadeInUp 0.8s ease 0.5s both}
+.review-write h3{color:#fff;margin-bottom:12px;font-size:15px}
+.review-write p{font-size:12px;color:rgba(240,236,228,0.4);margin-bottom:12px}
 .stars{display:flex;gap:8px;margin-bottom:12px}
-.star{font-size:28px;cursor:pointer;opacity:0.3;transition:opacity 0.2s}
-.star.active{opacity:1}
-.review-submit{width:100%;padding:12px;background:#ff0033;color:#fff;border:none;font-weight:700;border-radius:6px;cursor:pointer}
-.reviews-list{margin-top:20px;max-height:300px;overflow-y:auto}
-.review-item{background:rgba(192,0,26,0.05);padding:12px;border-radius:6px;margin-bottom:10px;font-size:13px;color:rgba(240,236,228,0.6)}
-.review-item strong{color:#fff;display:block;margin-bottom:4px}
-.review-item .stars-sm{color:#f59e0b;font-size:12px;margin-bottom:4px}
-.official-reviews{margin-top:40px;padding:20px;background:rgba(192,0,26,0.05);border-radius:8px}
-.official-reviews h3{color:#fff;margin-bottom:16px}
-.rev-item{background:rgba(192,0,26,0.08);padding:12px;border-radius:6px;margin-bottom:10px;font-size:13px;color:rgba(240,236,228,0.6)}
-.rev-item strong{color:#fff;display:block;margin-bottom:4px}
-.rev-item .verified{background:rgba(34,197,94,0.15);color:#4ade80;font-size:10px;padding:2px 6px;border-radius:3px;margin-left:8px}
-.pg-mobile-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(8,8,8,0.95),rgba(8,8,8,0.98));border-top:1px solid rgba(192,0,26,0.3);padding:14px 16px;z-index:99;flex-direction:column;gap:8px}
-.pg-mobile-buy-btn{width:100%;background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;padding:16px;font-weight:900;cursor:pointer;border-radius:10px}
+.star{font-size:32px;cursor:pointer;opacity:0.3;transition:all 0.2s}
+.star:hover{opacity:1}
+.star.active{opacity:1;animation:pulse 0.3s ease}
+.input-field{width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(192,0,26,0.2);border-radius:6px;color:#fff;font-family:inherit;margin-bottom:12px;font-size:14px}
+.input-field::placeholder{color:rgba(240,236,228,0.3)}
+.submit-btn{width:100%;padding:12px;background:#ff0033;color:#fff;border:none;font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s}
+.submit-btn:hover{background:#c0001a;transform:translateY(-2px)}
+.user-reviews{margin-top:16px;max-height:200px;overflow-y:auto;padding:8px}
+.review-item{background:rgba(192,0,26,0.05);padding:10px;border-radius:6px;margin-bottom:8px;font-size:12px;color:rgba(240,236,228,0.6);border-left:2px solid #ff0033}
+.review-name{color:#fff;font-weight:700;display:block;margin-bottom:4px}
+.review-stars{color:#f59e0b;font-size:11px}
+.official-reviews{background:rgba(192,0,26,0.05);padding:20px;border-radius:10px;animation:fadeInUp 0.8s ease 0.6s both}
+.official-reviews h3{color:#fff;margin-bottom:16px;font-size:15px}
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rev-card{background:rgba(192,0,26,0.08);padding:12px;border-radius:8px;font-size:12px;color:rgba(240,236,228,0.6);border-left:3px solid #ff0033;animation:fadeInUp 0.8s ease}
+.rev-name{color:#fff;font-weight:700;margin-bottom:4px}
+.rev-badge{background:rgba(34,197,94,0.15);color:#4ade80;font-size:10px;padding:2px 6px;border-radius:3px;margin-left:4px}
+.rev-stars{color:#f59e0b;font-size:11px;margin-bottom:6px}
+.footer{text-align:center;padding:20px;font-size:12px;color:rgba(240,236,228,0.2);border-top:1px solid rgba(192,0,26,0.2);margin-top:40px}
+.mobile-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(8,8,8,0.95),rgba(8,8,8,0.98));padding:16px;border-top:1px solid rgba(192,0,26,0.3);z-index:50;flex-direction:column;gap:10px}
+.mobile-price{font-size:20px;font-weight:900;color:#fff}
+.mobile-btn{width:100%;padding:14px;background:#ff0033;color:#fff;border:none;font-weight:900;border-radius:8px;cursor:pointer}
 @media(max-width:768px){
-  .pg-main{grid-template-columns:1fr}.pg-images{position:static;border-right:none;padding:20px}
-  .pg-carousel{aspect-ratio:3/4}.pg-details{padding:20px 20px 140px}
-  .pg-buy-btn{display:none}.pg-mobile-cta{display:flex}
+  .hero{height:300px}.hero-title{font-size:36px}
+  .hero-content{padding:0 20px}
+  .rev-grid{grid-template-columns:1fr}
+  .buy-btn{display:none}
+  .mobile-cta{display:flex}
 }
 </style>
 </head>
 <body>
 <nav class="nav">
-  <img class="nav-logo" src="${LOGO}" alt="NaughtyShop"/>
-  <button class="nav-btn" onclick="goToCheckout()">Buy Now</button>
+  <img class="nav-logo" src="${LOGO}"/>
+  <button class="nav-btn" onclick="goCheckout()">Buy Now</button>
 </nav>
 <div class="hero">
-  <img class="hero-bg" src="${BANNER}" alt="NaughtyShop"/>
+  <img class="hero-bg" src="${BANNER}"/>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1 class="hero-title">King Sleeve <span>Pro</span></h1>
-    <p class="hero-sub">Instantly add real size, girth & 10x stamina. Medical-grade silicone with secure waist belt.</p>
-    <button class="hero-buy-btn" onclick="document.getElementById('ps').scrollIntoView({behavior:'smooth'})">Shop Now ↓</button>
+    <p class="hero-sub">Real size + girth + 10x stamina. Discreet delivery. COD available.</p>
+    <button class="hero-btn" onclick="document.querySelector('.container').scrollIntoView({behavior:'smooth'})">Explore ↓</button>
   </div>
 </div>
-<div id="ps" class="pg-main">
-  <div class="pg-images">
-    <div class="pg-carousel" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
-      <img id="mainImg" class="pg-main-img" src="${IMG1}" alt="King Sleeve Pro"/>
+
+<div class="container">
+  <div class="section">
+    <div class="img-slider">
+      <img id="mainImg" class="main-img" src="${IMG1}" ontouchstart="ts(event)" ontouchend="te(event)"/>
     </div>
-    <div class="pg-thumbs">
-      <img class="pg-thumb active" src="${IMG1}" onclick="switchImg(this, 0)" alt="v1"/>
-      <img class="pg-thumb" src="${IMG2}" onclick="switchImg(this, 1)" alt="v2"/>
-      <img class="pg-thumb" src="${IMG3}" onclick="switchImg(this, 2)" alt="v3"/>
+    <div class="thumbs">
+      <img class="thumb active" src="${IMG1}" onclick="switchImg(0)"/>
+      <img class="thumb" src="${IMG2}" onclick="switchImg(1)"/>
+      <img class="thumb" src="${IMG3}" onclick="switchImg(2)"/>
     </div>
   </div>
-  <div class="pg-details">
-    <h2 class="pg-title">King Sleeve Pro</h2>
-    <p class="pg-meta">⭐⭐⭐⭐⭐ 4.8 (1,247 reviews) • COD Available • Free Shipping</p>
-    
-    <div class="pg-price-row">
-      <span class="pg-price" id="cp">₹${dp.toLocaleString('en-IN')}</span>
-      <span class="pg-price-mrp" id="cm">₹${dm.toLocaleString('en-IN')}</span>
-      <span class="pg-price-off" id="co">${dof}% off</span>
-    </div>
-    <div class="pg-prepaid">💰 Pay online & get <strong>25% extra off</strong> → ₹<span id="pp">${dpr}</span></div>
 
-    <div class="size-box">
-      <label class="size-label">📏 Select Size: <span id="sl" style="color:#ff0033">${sl}</span></label>
-      <div class="pg-sizes">
-        <button class="pg-size-btn" onclick="ss(this,6,1978)">6"</button>
-        <button class="pg-size-btn" onclick="ss(this,7,1978)">7"</button>
-        <button class="pg-size-btn active" onclick="ss(this,8,1978)">8"</button>
-        <button class="pg-size-btn" onclick="ss(this,9,1978)">9"</button>
-        <button class="pg-size-btn" onclick="ss(this,11,2749)">11"</button>
+  <div class="section">
+    <h2>King Sleeve Pro ⭐⭐⭐⭐⭐ (1,247 reviews)</h2>
+    
+    <div class="price-section">
+      <div class="price-row">
+        <span class="price-big" id="p">₹${dp.toLocaleString('en-IN')}</span>
+        <span class="price-old" id="m">₹${dm.toLocaleString('en-IN')}</span>
+        <span class="price-off" id="o">${dof}% off</span>
+      </div>
+      <div class="prepaid-note">💰 Pay online & get 25% extra → ₹${dpr}</div>
+    </div>
+
+    <div class="sizes-box">
+      <div class="sizes-label">📏 Select Size: <span id="sl" style="color:#ff0033">${defaultSize}"</span></div>
+      <div class="sizes">
+        <button class="size-btn" onclick="ss(this,6,1978)">6"</button>
+        <button class="size-btn" onclick="ss(this,7,1978)">7"</button>
+        <button class="size-btn ${defaultSize==='8'?'active':''}" onclick="ss(this,8,1978)">8"</button>
+        <button class="size-btn" onclick="ss(this,9,1978)">9"</button>
+        <button class="size-btn" onclick="ss(this,11,2749)">11"</button>
       </div>
     </div>
 
-    <button class="pg-buy-btn" onclick="goToCheckout()">🛒 Buy Now - ₹<span id="bp">${dp}</span></button>
+    <button class="buy-btn" onclick="goCheckout()">🛒 Buy Now - ₹<span id="bp">${dp}</span></button>
 
-    <div class="short-desc">🔥 Premium silicone extension sleeve with secure waist belt. Adds real size, girth & 10x stamina. Discreet delivery, COD available.</div>
-    
-    <a class="toggle-link" onclick="toggleDesc()">📖 Read full details ↓</a>
-    <div id="detailedDesc" class="detailed-desc">
-      <h3>📦 What You Get</h3>
-      <p>✓ Medical-grade silicone extension sleeve — 100% body-safe<br/>✓ Adjustable waist belt — Secure fit, no slipping<br/>✓ Realistic anatomical design — Maximum pleasure<br/>✓ 5 size options — 6" to 11"</p>
+    <div class="desc-box">
+      <h3>📦 What's Inside</h3>
+      <p>🔥 Premium medical-grade silicone extension sleeve</p>
+      <p>🔒 Secure adjustable waist belt - no slipping</p>
+      <p>💪 Instant size, girth & 10x stamina boost</p>
       
-      <h3 style="margin-top:16px">💪 Performance Benefits</h3>
-      <p>📏 Instantly adds real length & girth<br/>⚡ 10x stamina enhancement<br/>🔒 Hands-free performance with secure belt<br/>🎯 Confidence boost</p>
-      
-      <h3 style="margin-top:16px">🚚 Delivery & Privacy</h3>
-      <p>📦 Plain, unmarked packaging — 100% discreet<br/>⚡ Ships within 24 hours — Fast delivery<br/>💵 Cash on Delivery available<br/>↩️ 7-day easy returns if unopened</p>
+      <h3 style="margin-top:16px">🚚 Delivery</h3>
+      <ul>
+        <li>📦 Plain packaging - 100% discreet</li>
+        <li>⚡ Ships in 24 hours</li>
+        <li>💵 COD available</li>
+        <li>↩️ 7-day returns if unopened</li>
+      </ul>
     </div>
 
-    <div class="review-box">
-      <h3>✍️ Write Your Review</h3>
-      <p style="font-size:12px;color:rgba(240,236,228,0.4);margin-bottom:12px">(Your review will only appear on your device)</p>
+    <div class="review-write">
+      <h3>✍️ Share Your Review</h3>
+      <p>(Only visible to you)</p>
       <div style="margin-bottom:12px">
-        <label style="display:block;margin-bottom:8px;font-size:12px">Rating:</label>
-        <div class="stars" id="starRating">
-          <span class="star" onclick="setRating(1)">★</span>
-          <span class="star" onclick="setRating(2)">★</span>
-          <span class="star" onclick="setRating(3)">★</span>
-          <span class="star" onclick="setRating(4)">★</span>
-          <span class="star" onclick="setRating(5)">★</span>
+        <label style="font-size:12px;color:rgba(240,236,228,0.5)">Rate it:</label>
+        <div class="stars" id="sr">
+          <span class="star" onclick="rt(1)">★</span>
+          <span class="star" onclick="rt(2)">★</span>
+          <span class="star" onclick="rt(3)">★</span>
+          <span class="star" onclick="rt(4)">★</span>
+          <span class="star" onclick="rt(5)">★</span>
         </div>
       </div>
-      <input class="review-input" id="reviewName" placeholder="Your name (optional)" type="text" maxlength="30"/>
-      <textarea class="review-input" id="reviewText" placeholder="Share your experience..." maxlength="200" rows="3"></textarea>
-      <button class="review-submit" onclick="submitReview()">Post Review</button>
-      <div class="reviews-list" id="reviewsList"></div>
+      <input class="input-field" id="rn" placeholder="Your name (optional)" maxlength="30"/>
+      <textarea class="input-field" id="rt" placeholder="Your review..." maxlength="200" rows="3"></textarea>
+      <button class="submit-btn" onclick="submit_review()">Post Review</button>
+      <div class="user-reviews" id="ur"></div>
     </div>
 
     <div class="official-reviews">
-      <h3>⭐ Customer Reviews (Official)</h3>
-      <div id="officialReviews"></div>
+      <h3>⭐ What People Say</h3>
+      <div class="rev-grid" id="rg"></div>
     </div>
   </div>
 </div>
-<div class="pg-mobile-cta">
-  <div style="display:flex;gap:12px;align-items:center">
-    <span style="font-size:24px;font-weight:900;color:#fff">₹<span id="mp">${dp.toLocaleString('en-IN')}</span></span>
-    <span style="font-size:12px;color:#4ade80;font-weight:800">-<span id="mo">${dof}</span>%</span>
-  </div>
-  <button class="pg-mobile-buy-btn" onclick="goToCheckout()">🛒 Buy Now</button>
-</div>
-<script>
-var IMGS=['${IMG1}','${IMG2}','${IMG3}'];
-var VIDS={6:'${VARIANT_IDS[6]}',7:'${VARIANT_IDS[7]}',8:'${VARIANT_IDS[8]}',9:'${VARIANT_IDS[9]}',11:'${VARIANT_IDS[11]}'};
-var OFFICIAL_REVIEWS=${JSON.stringify(REVIEWS)};
-var FUSION_CHECKOUT='${FUSION_CHECKOUT}';
-var mrps={6:3999,7:3999,8:3999,9:3999,11:5499};
-var cs=8,cp=${dp},imgIdx=0,currentRating=0,touchStart=0,touchEnd=0;
 
-function handleTouchStart(e){touchStart=e.changedTouches[0].clientX}
-function handleTouchEnd(e){
-  touchEnd=e.changedTouches[0].clientX;
-  if(Math.abs(touchStart-touchEnd)>50){
-    if(touchStart-touchEnd>0 && imgIdx<2){imgIdx++;switchImg(document.querySelectorAll('.pg-thumb')[imgIdx],imgIdx)}
-    else if(touchStart-touchEnd<0 && imgIdx>0){imgIdx--;switchImg(document.querySelectorAll('.pg-thumb')[imgIdx],imgIdx)}
-  }
+<div class="footer">© 2025 NaughtyShop • 🔒 100% Private</div>
+
+<div class="mobile-cta">
+  <div class="mobile-price">₹<span id="mp">${dp.toLocaleString('en-IN')}</span></div>
+  <button class="mobile-btn" onclick="goCheckout()">🛒 Buy Now</button>
+</div>
+
+<script>
+var IMGS=['${IMG1}','${IMG2}','${IMG3}'],VIDS={6:'${VARIANT_IDS[6]}',7:'${VARIANT_IDS[7]}',8:'${VARIANT_IDS[8]}',9:'${VARIANT_IDS[9]}',11:'${VARIANT_IDS[11]}'},REV=${JSON.stringify(REVIEWS)};
+var cs=8,cp=${dp},idx=0,cRat=0,ts_x=0;
+var mrps={6:3999,7:3999,8:3999,9:3999,11:5499};
+function ts(e){ts_x=e.changedTouches[0].clientX}
+function te(e){
+  var te_x=e.changedTouches[0].clientX,diff=ts_x-te_x;
+  if(Math.abs(diff)>50){if(diff>0&&idx<2){idx++;sw()}else if(diff<0&&idx>0){idx--;sw()}}
 }
-function ss(btn,size,price){
-  document.querySelectorAll('.pg-size-btn').forEach(b=>b.classList.remove('active'));
+function sw(){document.getElementById('mainImg').src=IMGS[idx];document.querySelectorAll('.thumb').forEach((t,i)=>{t.classList.toggle('active',i===idx)})}
+function switchImg(i){idx=i;sw()}
+function ss(btn,sz,pr){
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  cs=size;cp=price;
-  var m=mrps[size],of=Math.round((1-price/m)*100),pr=Math.round(price*0.75);
-  document.getElementById('cp').textContent='₹'+price.toLocaleString('en-IN');
-  document.getElementById('cm').textContent='₹'+m.toLocaleString('en-IN');
-  document.getElementById('co').textContent=of+'% off';
-  document.getElementById('pp').textContent=pr;
-  document.getElementById('bp').textContent=price;
-  document.getElementById('sl').textContent=size+' Inch'+(size==8?' (Most Popular)':(size==11?' (Biggest Size)':''));
-  document.getElementById('mp').textContent=price.toLocaleString('en-IN');
-  document.getElementById('mo').textContent=of;
+  cs=sz;cp=pr;
+  var m=mrps[sz],o=Math.round((1-pr/m)*100),pp=Math.round(pr*0.75);
+  document.getElementById('p').textContent='₹'+pr.toLocaleString('en-IN');
+  document.getElementById('m').textContent='₹'+m.toLocaleString('en-IN');
+  document.getElementById('o').textContent=o+'% off';
+  document.getElementById('sl').textContent=sz+'"';
+  document.getElementById('bp').textContent=pr;
+  document.getElementById('mp').textContent=pr.toLocaleString('en-IN');
 }
-function switchImg(t,idx){
-  document.querySelectorAll('.pg-thumb').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  imgIdx=idx;
-  document.getElementById('mainImg').src=IMGS[idx];
+function rt(r){cRat=r;document.querySelectorAll('#sr .star').forEach((s,i)=>{s.classList.toggle('active',i<r)})}
+function submit_review(){
+  var nm=document.getElementById('rn').value||'Anonymous',tx=document.getElementById('rt').value.trim();
+  if(!cRat||!tx){alert('Please rate & review');return}
+  var revs=JSON.parse(localStorage.getItem('ns_rev')||'[]');
+  revs.unshift({name:nm,rating:cRat,text:tx,time:'just now'});
+  localStorage.setItem('ns_rev',JSON.stringify(revs));
+  document.getElementById('rn').value='';
+  document.getElementById('rt').value='';
+  cRat=0;
+  document.querySelectorAll('#sr .star').forEach(s=>s.classList.remove('active'));
+  load_user_reviews();
 }
-function goToCheckout(){
-  window.location.href=FUSION_CHECKOUT+'?source=naughtyshop&shop=p91iux-zw.myshopify.com&size='+cs+'&price='+cp;
+function load_user_reviews(){
+  var revs=JSON.parse(localStorage.getItem('ns_rev')||'[]');
+  var h='';
+  revs.slice(0,5).forEach(r=>{h+='<div class="review-item"><span class="review-name">'+r.name+'</span><span class="review-stars">'+('★'.repeat(r.rating))+'</span><div>'+r.text+'</div><div style="opacity:0.5;font-size:11px">'+r.time+'</div></div>'});
+  document.getElementById('ur').innerHTML=h;
 }
-function toggleDesc(){document.getElementById('detailedDesc').classList.toggle('show')}
-function setRating(n){
-  currentRating=n;
-  document.querySelectorAll('#starRating .star').forEach((s,i)=>{s.classList.toggle('active',i<n)});
-}
-function submitReview(){
-  var name=document.getElementById('reviewName').value||'Anonymous';
-  var text=document.getElementById('reviewText').value.trim();
-  if(!currentRating||!text){alert('Please rate & write a review');return}
-  var reviews=JSON.parse(localStorage.getItem('naughtyshop_reviews')||'[]');
-  reviews.unshift({name,rating:currentRating,text,time:'just now'});
-  localStorage.setItem('naughtyshop_reviews',JSON.stringify(reviews));
-  document.getElementById('reviewName').value='';
-  document.getElementById('reviewText').value='';
-  currentRating=0;
-  document.querySelectorAll('#starRating .star').forEach(s=>s.classList.remove('active'));
-  loadReviews();
-}
-function loadReviews(){
-  var reviews=JSON.parse(localStorage.getItem('naughtyshop_reviews')||'[]');
-  var html='';
-  reviews.slice(0,5).forEach(r=>{html+='<div class="review-item"><strong>'+r.name+'</strong><div class="stars-sm">'+('★'.repeat(r.rating))+'</div>'+r.text+'<br/><span style="opacity:0.5;font-size:11px">'+r.time+'</span></div>'});
-  document.getElementById('reviewsList').innerHTML=html;
-}
-function loadOfficialReviews(){
-  var html='';
-  OFFICIAL_REVIEWS.slice(0,8).forEach(r=>{
-    var badge=r.verified?'<span class="verified">✓ Verified</span>':'';
-    html+='<div class="rev-item"><strong>'+r.name+badge+'</strong><div class="stars-sm">'+('★'.repeat(r.rating))+'</div>'+r.text+'<br/><span style="opacity:0.5;font-size:11px">'+r.time+'</span></div>';
+function load_official(){
+  var h='';
+  REV.forEach(r=>{
+    var bd=r.verified?'<span class="rev-badge">✓ Verified</span>':'';
+    h+='<div class="rev-card"><div class="rev-name">'+r.name+bd+'</div><div class="rev-stars">'+('★'.repeat(r.rating))+'</div><div>'+r.text+'</div><div style="opacity:0.5;font-size:10px;margin-top:6px">'+r.time+'</div></div>';
   });
-  document.getElementById('officialReviews').innerHTML=html;
+  document.getElementById('rg').innerHTML=h;
 }
-loadReviews();
-loadOfficialReviews();
-ss(document.querySelectorAll('.pg-size-btn')[2],8,1978);
+function goCheckout(){window.location.href='${FUSION_CHECKOUT}?source=naughtyshop&shop=p91iux-zw.myshopify.com&size='+cs+'&price='+cp}
+load_user_reviews();
+load_official();
+if('${defaultSize}'==='8')ss(document.querySelectorAll('.size-btn')[2],8,1978);
 </script>
 </body>
 </html>`;
 }
-
-app.get('/', (req, res) => {
-  const size = req.query.size || '8';
-  res.send(getPageHTML(size));
-});
-
-app.listen(PORT, () => {
-  console.log(`NaughtyShop server running on port ${PORT}`);
-});
+app.get('/',(req,res)=>{res.send(getPageHTML(req.query.size||'8'))});
+app.listen(PORT,()=>{console.log('NaughtyShop running on '+PORT)});

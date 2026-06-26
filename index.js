@@ -9,7 +9,11 @@ const LOGO = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Logo_9b05c0
 const BANNER = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/banner2.png?v=1782295395";
 const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout";
 
-const VARIANT_IDS = {6:"45973012250703",7:"45973012316239",8:"45973012349007",9:"45973017002063",11:"45973017034831"};
+const VARIANT_ID = "45973012349007";
+const PRICE = 1978;
+const MRP = 3999;
+const DISCOUNT_PCT = Math.round((1 - PRICE / MRP) * 100);
+const PREPAID_PRICE = Math.round(PRICE * 0.75);
 
 const REVIEWS = [
   {name:"Rahul Sharma",rating:5,verified:true,text:"Bhai ekdum mast product hai, delivery bhi bahut fast thi. Packaging bilkul plain thi. Highly recommend karta hun!",time:"2 din pehle"},
@@ -21,16 +25,15 @@ const REVIEWS = [
   {name:"Manoj Tiwari",rating:5,verified:true,text:"Kya maal hai bhai! Box pe sirf ek plain sticker tha. Full marks!",time:"3 hafte pehle"},
   {name:"Rajesh Patel",rating:5,verified:true,text:"Yaar ye product ne life change kar di. Quality bahut solid hai. Pakka 5 star.",time:"1 mahina pehle"},
   {name:"Sanjay Mishra",rating:4,verified:true,text:"Product bahut accha hai. Silicone material ekdum soft aur realistic hai.",time:"1 mahina pehle"},
-  {name:"Arjun Nair",rating:5,verified:true,text:"Ordered the 9 inch variant. Absolutely love it. 100% satisfied!",time:"1 mahina pehle"},
+  {name:"Arjun Nair",rating:5,verified:true,text:"Ordered the 8 inch variant. Absolutely love it. 100% satisfied!",time:"1 mahina pehle"},
   {name:"Pradeep Joshi",rating:5,verified:true,text:"Bhai COD ka option tha isliye trust hua. Product real mein bahut acha nikla.",time:"6 hafte pehle"},
   {name:"Gaurav Shukla",rating:5,verified:true,text:"Sahi mein paise wasool product hai. Stamina wala fayda amazing hai.",time:"5 hafte pehle"},
   {name:"Hemant Dubey",rating:5,verified:true,text:"Itne din se dhoondh raha tha aisa product. Quality ekdum first class hai.",time:"7 hafte pehle"},
-  {name:"Naresh Verma",rating:5,verified:true,text:"11 inch wala manga tha, aaya bhi wahi. Stamina mein fark clearly dikh raha hai.",time:"2 mahine pehle"},
+  {name:"Naresh Verma",rating:5,verified:true,text:"8 inch wala best size hai. Stamina mein fark clearly dikh raha hai.",time:"2 mahine pehle"},
   {name:"Santosh Yadav",rating:5,verified:true,text:"Superb quality hai bhai. Amazon pe nahi mila, yahan se mila aur quality bhi better hai.",time:"2 mahine pehle"},
 ];
 
-function getPageHTML(defaultSize="8"){
-  const dp=defaultSize==="11"?2749:1978,dm=defaultSize==="11"?5499:3999,dof=Math.round((1-dp/dm)*100),dpr=Math.round(dp*0.75);
+function getPageHTML(){
   
   return`<!DOCTYPE html>
 <html lang="en">
@@ -43,33 +46,10 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideInRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes popIn{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
-@keyframes fadeOut{from{opacity:1}to{opacity:0}}
-.spin-popup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(5px);animation:fadeInUp 0.5s ease}
-.spin-popup.show{display:flex}
-.spin-popup.hide{animation:fadeOut 0.5s ease forwards}
-.spin-container{background:linear-gradient(135deg,#1a0a0a,#2a0a0a);border:3px solid #ff0033;border-radius:20px;padding:40px;text-align:center;max-width:400px;animation:popIn 0.6s ease}
-.spin-title{font-size:28px;font-weight:900;color:#fff;margin-bottom:20px}
-.spin-wheel{width:280px;height:280px;margin:0 auto 30px;position:relative;cursor:pointer}
-.wheel{width:100%;height:100%;border-radius:50%;border:8px solid #ff0033;background:conic-gradient(from 0deg,#ff0033 0deg 45deg,#ff4444 45deg 90deg,#ff6666 90deg 135deg,#ff0033 135deg 180deg,#ff4444 180deg 225deg,#ff6666 225deg 270deg,#ff0033 270deg 315deg,#ff4444 315deg 360deg);display:flex;align-items:center;justify-content:center;transition:transform 0.1s;box-shadow:0 0 30px rgba(255,0,51,0.4)}
-.wheel.spinning{animation:spin 4s cubic-bezier(0.25,0.46,0.45,0.94) forwards}
-.wheel-center{width:60px;height:60px;background:#0a0a0a;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:24px}
-.spin-pointer{position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:30px solid #ff0033;z-index:10}
-.spin-text{font-size:16px;color:rgba(240,236,228,0.7);margin-bottom:20px}
-.spin-btn{width:100%;padding:15px;background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;font-weight:900;font-size:16px;cursor:pointer;border-radius:10px;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px}
-.spin-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,0,26,0.4)}
-.spin-btn:disabled{opacity:0.5;cursor:not-allowed}
-.spin-result{margin-top:20px;padding:15px;background:rgba(34,197,94,0.15);border:2px solid #4ade80;border-radius:10px;display:none}
-.spin-result.show{display:block;animation:popIn 0.5s ease}
-.result-code{font-size:24px;font-weight:900;color:#4ade80;margin-bottom:10px;font-family:monospace;letter-spacing:2px}
-.copy-btn{width:100%;padding:10px;background:#4ade80;color:#000;border:none;font-weight:800;cursor:pointer;border-radius:6px;margin-top:10px}
-.copy-btn:hover{background:#22c55e}
-
 .nav{background:rgba(8,8,8,0.98);padding:16px 24px;border-bottom:1px solid rgba(192,0,26,0.3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .nav-logo{height:40px;object-fit:contain}
 .nav-btn{background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;padding:10px 24px;font-weight:800;cursor:pointer;border-radius:6px;transition:all 0.3s;font-size:12px}
-.nav-btn:hover{transform:translateY(-2px)}
+.nav-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,0,26,0.4)}
 .hero{position:relative;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:fadeInUp 0.8s ease}
 .hero-bg{position:absolute;inset:0;object-fit:cover}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,8,0.95),rgba(8,8,8,0.5),transparent)}
@@ -93,12 +73,6 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 .price-old{font-size:16px;color:rgba(240,236,228,0.25);text-decoration:line-through}
 .price-off{color:#4ade80;font-weight:800;font-size:14px}
 .prepaid-note{font-size:13px;color:#4ade80;margin-top:12px;padding:12px;background:rgba(34,197,94,0.08);border-radius:6px}
-.sizes-box{background:rgba(192,0,26,0.1);padding:20px;border-radius:10px;margin-bottom:20px;border:2px solid #ff0033;animation:slideInRight 0.8s ease 0.2s both}
-.sizes-label{font-size:13px;font-weight:700;color:#fff;margin-bottom:12px}
-.sizes{display:flex;gap:10px;flex-wrap:wrap}
-.size-btn{padding:10px 18px;border:2px solid rgba(192,0,26,0.3);background:transparent;color:rgba(240,236,228,0.6);font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s;font-size:13px;text-transform:uppercase}
-.size-btn:hover{border-color:#ff0033;color:#ff0033}
-.size-btn.active{border-color:#ff0033;background:linear-gradient(135deg,rgba(192,0,26,0.3),rgba(192,0,26,0.15));color:#fff;box-shadow:0 4px 12px rgba(192,0,26,0.2);animation:pulse 0.3s ease}
 .buy-btn{width:100%;padding:18px;background:linear-gradient(135deg,#ff0033,#c0001a);color:#fff;border:none;font-size:16px;font-weight:900;cursor:pointer;border-radius:8px;transition:all 0.3s;margin-bottom:20px;text-transform:uppercase;letter-spacing:1px;animation:slideInRight 0.8s ease 0.3s both}
 .buy-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(192,0,26,0.4)}
 .desc-box{background:rgba(192,0,26,0.05);padding:20px;border-radius:10px;line-height:1.8;color:rgba(240,236,228,0.7);animation:fadeInUp 0.8s ease 0.4s both}
@@ -138,25 +112,10 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
   .rev-grid{grid-template-columns:1fr}
   .buy-btn{display:none}
   .mobile-cta{display:flex}
-  .spin-container{max-width:320px;padding:30px}
 }
 </style>
 </head>
 <body>
-
-<div class="spin-popup" id="sp">
-  <div class="spin-container">
-    <div class="spin-title">🎁 Try Your Luck!</div>
-    <div class="spin-pointer"></div>
-    <div class="spin-wheel" id="sw">
-      <div class="wheel" id="wh"></div>
-      <div class="wheel-center">🎯</div>
-    </div>
-    <div class="spin-text">Spin the wheel & get instant discount!</div>
-    <button class="spin-btn" id="sb" onclick="spinWheel()">SPIN NOW</button>
-    <div class="spin-result" id="sr"></div>
-  </div>
-</div>
 
 <nav class="nav">
   <img class="nav-logo" src="${LOGO}"/>
@@ -185,29 +144,18 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
   </div>
 
   <div class="section">
-    <h2>King Sleeve Pro ⭐⭐⭐⭐⭐ (1,247 reviews)</h2>
+    <h2>King Sleeve Pro 8" ⭐⭐⭐⭐⭐ (1,247 reviews)</h2>
     
     <div class="price-section">
       <div class="price-row">
-        <span class="price-big" id="p">₹${dp.toLocaleString('en-IN')}</span>
-        <span class="price-old" id="m">₹${dm.toLocaleString('en-IN')}</span>
-        <span class="price-off" id="o">${dof}% off</span>
+        <span class="price-big">₹${PRICE.toLocaleString('en-IN')}</span>
+        <span class="price-old">₹${MRP.toLocaleString('en-IN')}</span>
+        <span class="price-off">${DISCOUNT_PCT}% off</span>
       </div>
-      <div class="prepaid-note">💰 Pay online & get 25% extra → ₹${dpr}</div>
+      <div class="prepaid-note">💰 Pay online & get 25% extra → ₹${PREPAID_PRICE}</div>
     </div>
 
-    <div class="sizes-box">
-      <div class="sizes-label">📏 Select Size: <span id="sl" style="color:#ff0033">${defaultSize}"</span></div>
-      <div class="sizes">
-        <button class="size-btn" onclick="ss(this,6,1978)">6"</button>
-        <button class="size-btn" onclick="ss(this,7,1978)">7"</button>
-        <button class="size-btn ${defaultSize==='8'?'active':''}" onclick="ss(this,8,1978)">8"</button>
-        <button class="size-btn" onclick="ss(this,9,1978)">9"</button>
-        <button class="size-btn" onclick="ss(this,11,2749)">11"</button>
-      </div>
-    </div>
-
-    <button class="buy-btn" onclick="goCheckout()">🛒 Buy Now - ₹<span id="bp">${dp}</span></button>
+    <button class="buy-btn" onclick="goCheckout()">🛒 Buy Now - ₹${PRICE.toLocaleString('en-IN')}</button>
 
     <div class="desc-box">
       <h3>📦 What's Inside</h3>
@@ -232,8 +180,8 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
       <h3 style="margin-top:16px">🧪 Material & Safety</h3>
       <p>Made from premium medical-grade silicone that's tested & approved for intimate use. Soft, flexible, and durable. Safe for all skin types.</p>
 
-      <h3 style="margin-top:16px">📏 Size Guide</h3>
-      <p><strong>6"</strong> — Compact, discreet | <strong>7"</strong> — Standard add-on | <strong>8"</strong> — Most popular choice ⭐ | <strong>9"</strong> — Premium size | <strong>11"</strong> — Maximum girth & length 💪</p>
+      <h3 style="margin-top:16px">📏 Size: 8 Inch (Most Popular)</h3>
+      <p>The 8 inch is our best seller — perfect balance of size and comfort. Most customers choose this size. ⭐</p>
     </div>
 
     <div class="review-write">
@@ -265,15 +213,14 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 <div class="footer">© 2025 NaughtyShop • 🔒 100% Private</div>
 
 <div class="mobile-cta">
-  <div class="mobile-price">₹<span id="mp">${dp.toLocaleString('en-IN')}</span></div>
+  <div class="mobile-price">₹${PRICE.toLocaleString('en-IN')}</div>
   <button class="mobile-btn" onclick="goCheckout()">🛒 Buy Now</button>
 </div>
 
 <script>
-var IMGS=['${IMG1}','${IMG2}','${IMG3}'],VIDS={6:'${VARIANT_IDS[6]}',7:'${VARIANT_IDS[7]}',8:'${VARIANT_IDS[8]}',9:'${VARIANT_IDS[9]}',11:'${VARIANT_IDS[11]}'},REV=${JSON.stringify(REVIEWS)};
-var cs=8,cp=${dp},idx=0,cRat=0,ts_x=0,spun=false;
-var mrps={6:3999,7:3999,8:3999,9:3999,11:5499};
-var spinCount=parseInt(localStorage.getItem('spinCount')||'0');
+var IMGS=['${IMG1}','${IMG2}','${IMG3}'],REV=${JSON.stringify(REVIEWS)};
+var idx=0,cRat=0,ts_x=0;
+const VARIANT='${VARIANT_ID}',PRICE=${PRICE};
 
 function ts(e){ts_x=e.changedTouches[0].clientX}
 function te(e){
@@ -282,18 +229,6 @@ function te(e){
 }
 function sw(){document.getElementById('mainImg').src=IMGS[idx];document.querySelectorAll('.thumb').forEach((t,i)=>{t.classList.toggle('active',i===idx)})}
 function switchImg(i){idx=i;sw()}
-function ss(btn,sz,pr){
-  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  cs=sz;cp=pr;
-  var m=mrps[sz],o=Math.round((1-pr/m)*100),pp=Math.round(pr*0.75);
-  document.getElementById('p').textContent='₹'+pr.toLocaleString('en-IN');
-  document.getElementById('m').textContent='₹'+m.toLocaleString('en-IN');
-  document.getElementById('o').textContent=o+'% off';
-  document.getElementById('sl').textContent=sz+'"';
-  document.getElementById('bp').textContent=pr;
-  document.getElementById('mp').textContent=pr.toLocaleString('en-IN');
-}
 function rt(r){cRat=r;document.querySelectorAll('#sr .star').forEach((s,i)=>{s.classList.toggle('active',i<r)})}
 function submit_review(){
   var nm=document.getElementById('rn').value||'Anonymous',tx=document.getElementById('rt').value.trim();
@@ -321,52 +256,13 @@ function load_official(){
   });
   document.getElementById('rg').innerHTML=h;
 }
-function spinWheel(){
-  if(spun){alert('You already spun! Come back later');return}
-  var btn=document.getElementById('sb');
-  btn.disabled=true;
-  var wheel=document.getElementById('wh');
-  var rotation=Math.floor(Math.random()*360)+720;
-  wheel.style.transition='transform 4s cubic-bezier(0.25,0.46,0.45,0.94)';
-  wheel.style.transform='rotate('+rotation+'deg)';
-  setTimeout(function(){
-    spun=true;
-    spinCount++;
-    localStorage.setItem('spinCount',spinCount);
-    var sr=document.getElementById('sr');
-    sr.classList.add('show');
-    if(spinCount%20===0){
-      sr.innerHTML='<div style="font-size:14px;color:rgba(240,236,228,0.6);margin-bottom:10px">🎉 Congratulations!</div><div class="result-code">HAPPY2026</div><button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>';
-    }else{
-      sr.innerHTML='<div style="font-size:14px;color:rgba(240,236,228,0.6)">You won a spin! Come back at '+((21-spinCount%20)+spinCount)+'th spin</div>';
-    }
-    setTimeout(function(){closeSpin()},2000);
-  },4000);
-}
-function copyCode(){
-  navigator.clipboard.writeText('HAPPY2026');
-  alert('Code copied! ✅');
-}
-function closeSpin(){
-  var popup=document.getElementById('sp');
-  popup.classList.add('hide');
-  setTimeout(function(){popup.classList.remove('show','hide')},500);
-}
-function goCheckout(){window.location.href='${FUSION_CHECKOUT}?source=naughtyshop&shop=p91iux-zw.myshopify.com&size='+cs+'&price='+cp}
-
-window.addEventListener('load',function(){
-  if(!localStorage.getItem('spinShown')){
-    document.getElementById('sp').classList.add('show');
-    localStorage.setItem('spinShown','true');
-  }
-});
+function goCheckout(){window.location.href='${FUSION_CHECKOUT}?source=naughtyshop&shop=p91iux-zw.myshopify.com&size=8&price='+PRICE}
 
 load_user_reviews();
 load_official();
-if('${defaultSize}'==='8')ss(document.querySelectorAll('.size-btn')[2],8,1978);
 </script>
 </body>
 </html>`;
 }
-app.get('/',(req,res)=>{res.send(getPageHTML(req.query.size||'8'))});
+app.get('/',(req,res)=>{res.send(getPageHTML())});
 app.listen(PORT,()=>{console.log('NaughtyShop running on '+PORT)});

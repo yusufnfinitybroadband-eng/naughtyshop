@@ -257,7 +257,7 @@ function load_official(){
   document.getElementById('rg').innerHTML=h;
 }
 function goCheckout(){
-  var url='${FUSION_CHECKOUT}?shop=p91iux-zw.myshopify.com&source=naughtyshop&variantId=${VARIANT_ID}&price='+(PRICE*100)+'&productTitle=King+Sleeve+Pro&variantTitle=8+Inch&image='+encodeURIComponent('${IMG1}');
+  var url='${FUSION_CHECKOUT}?shop=p91iux-zw.myshopify.com&source=naughtyshop&buyNow=true&variantId=${VARIANT_ID}&price='+(PRICE*100)+'&productTitle=King+Sleeve+Pro&variantTitle=8+Inch&image='+encodeURIComponent('${IMG1}');
   window.location.href=url;
 }
 

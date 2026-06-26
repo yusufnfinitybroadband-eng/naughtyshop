@@ -10,7 +10,16 @@ const LOGO = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Logo_9b05c0
 const BANNER = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/banner2.png?v=1782295395";
 
 // Fusion Checkout URL
-const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout?source=naughtyshop&shop=p91iux-zw.myshopify.com";
+const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout";
+
+// Variant IDs
+const VARIANT_IDS = {
+  6: "45973012250703",
+  7: "45973012316239",
+  8: "45973012349007",
+  9: "45973017002063",
+  11: "45973017034831"
+};
 
 const REVIEWS = [
   {name:"Rahul Sharma",rating:5,verified:true,text:"Bhai ekdum mast product hai, delivery bhi bahut fast thi. Packaging bilkul plain thi. Highly recommend karta hun!",time:"2 din pehle"},
@@ -82,8 +91,8 @@ body{background:linear-gradient(135deg,#0a0a0a 0%,#1a0a0a 100%);color:#f0ece4;fo
 .hero-trust-dot{width:6px;height:6px;background:linear-gradient(135deg,#ff0033,#c0001a);border-radius:50%;box-shadow:0 0 10px rgba(192,0,26,0.4)}
 .pg-main{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(192,0,26,0.2);gap:0}
 .pg-images{padding:32px;background:rgba(15,15,15,0.5);border-right:1px solid rgba(192,0,26,0.2);position:sticky;top:64px;height:fit-content;overflow:hidden}
-.pg-carousel{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:12px;background:#111;border:1px solid rgba(192,0,26,0.2);box-shadow:0 10px 40px rgba(0,0,0,0.5)}
-.pg-main-img{width:100%;height:100%;object-fit:cover;cursor:grab;user-select:none}
+.pg-carousel{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:12px;background:#111;border:1px solid rgba(192,0,26,0.2);box-shadow:0 10px 40px rgba(0,0,0,0.5);touch-action:pan-y}
+.pg-main-img{width:100%;height:100%;object-fit:cover;cursor:grab;user-select:none;display:block}
 .pg-main-img:active{cursor:grabbing}
 .pg-thumbs{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding:4px}
 .pg-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;border:3px solid transparent;cursor:pointer;background:#111;flex-shrink:0;transition:all 0.3s ease;filter:brightness(0.7)}
@@ -217,7 +226,7 @@ body{background:linear-gradient(135deg,#0a0a0a 0%,#1a0a0a 100%);color:#f0ece4;fo
 </div>
 <div id="ps" class="pg-main">
   <div class="pg-images">
-    <div class="pg-carousel" id="carousel" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+    <div class="pg-carousel" id="carousel" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
       <img id="mainImg" class="pg-main-img" src="${IMG1}" alt="King Sleeve Pro"/>
     </div>
     <div class="pg-thumbs" id="thumbs">
@@ -312,6 +321,7 @@ body{background:linear-gradient(135deg,#0a0a0a 0%,#1a0a0a 100%);color:#f0ece4;fo
 </div>
 <script>
 var IMGS=['${IMG1}','${IMG2}','${IMG3}'];
+var VIDS={6:'45973012250703',7:'45973012316239',8:'45973012349007',9:'45973017002063',11:'45973017034831'};
 var FUSION_CHECKOUT='${FUSION_CHECKOUT}';
 var RV=${JSON.stringify(REVIEWS)};
 var mrps={6:3999,7:3999,8:3999,9:3999,11:5499};
@@ -319,8 +329,8 @@ var pop={8:" (Most Popular)",11:" (Biggest Size)"};
 var cs=8,cp=${dp},imgIdx=0;
 var PP=6,pg=1,tp=Math.ceil(RV.length/PP);
 var touchStart=0,touchEnd=0;
+
 function handleTouchStart(e){touchStart=e.changedTouches[0].clientX}
-function handleTouchMove(e){e.preventDefault()}
 function handleTouchEnd(e){
   touchEnd=e.changedTouches[0].clientX;
   var diff=touchStart-touchEnd;
@@ -329,9 +339,11 @@ function handleTouchEnd(e){
     else if(diff<0 && imgIdx>0){imgIdx--;switchImg(document.querySelectorAll('.pg-thumb')[imgIdx],imgIdx)}
   }
 }
+
 function ss(btn,size,price){
   document.querySelectorAll('.pg-size-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');cs=size;cp=price;
+  btn.classList.add('active');
+  cs=size;cp=price;
   var m=mrps[size],of=Math.round((1-price/m)*100),pr=Math.round(price*0.75);
   document.getElementById('cp').textContent='₹'+price.toLocaleString('en-IN');
   document.getElementById('cm').textContent='₹'+m.toLocaleString('en-IN');
@@ -342,14 +354,20 @@ function ss(btn,size,price){
   document.getElementById('mm').textContent='₹'+m.toLocaleString('en-IN');
   document.getElementById('mo').textContent=of+'% off';
 }
+
 function switchImg(t,idx){
   document.querySelectorAll('.pg-thumb').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
   imgIdx=idx;
   document.getElementById('mainImg').src=IMGS[idx];
 }
-function goToCheckout(){window.location.href=FUSION_CHECKOUT+'&size='+cs}
+
+function goToCheckout(){
+  window.location.href=FUSION_CHECKOUT+'?source=naughtyshop&shop=p91iux-zw.myshopify.com&size='+cs+'&price='+cp;
+}
+
 function sh(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
+
 function rr(){
   var s=(pg-1)*PP,e=Math.min(s+PP,RV.length),h='';
   for(var i=s;i<e;i++){var r=RV[i];var v=r.verified?'<span class="rv-verified">✓ Verified</span>':'';h+='<div class="rv-card"><div class="rv-top"><div class="rv-avatar">'+r.name[0]+'</div><div class="rv-meta"><div class="rv-name-row"><span class="rv-name">'+r.name+'</span>'+v+'</div><div class="rv-stars-sm">'+sh(r.rating)+'</div></div><div class="rv-time">'+r.time+'</div></div><p class="rv-text">'+r.text+'</p></div>'}
@@ -360,6 +378,7 @@ function rr(){
   var d='';for(var p=1;p<=tp;p++)d+='<button class="rv-pg-dot'+(p===pg?' active':'')+'" onclick="gp('+p+')"></button>';
   document.getElementById('rd').innerHTML=d;
 }
+
 function cp2(dir){var n=pg+dir;if(n<1||n>tp)return;pg=n;rr();document.getElementById('rv').scrollIntoView({behavior:'smooth'})}
 function gp(p){pg=p;rr();document.getElementById('rv').scrollIntoView({behavior:'smooth'})}
 rr();

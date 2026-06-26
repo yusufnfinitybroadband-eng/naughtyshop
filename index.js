@@ -9,16 +9,8 @@ const IMG3 = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Image_3.web
 const LOGO = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Logo_9b05c0db-95d9-4ad1-89e5-1682f42a98c1.png?v=1782295395";
 const BANNER = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/banner2.png?v=1782295395";
 
-// Shopify variant IDs
-const VARIANT_IDS = {
-  6: "45973012250703",
-  7: "45973012316239",
-  8: "45973012349007",
-  9: "45973017002063",
-  11: "45973017034831"
-};
-
-const CHECKOUT_BASE = `https://fusionprime.in/cart`;
+// Fusion Checkout URL
+const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout?source=naughtyshop&shop=p91iux-zw.myshopify.com";
 
 const REVIEWS = [
   {name:"Rahul Sharma",rating:5,verified:true,text:"Bhai ekdum mast product hai, delivery bhi bahut fast thi. Packaging bilkul plain thi. Highly recommend karta hun!",time:"2 din pehle"},
@@ -320,8 +312,7 @@ body{background:linear-gradient(135deg,#0a0a0a 0%,#1a0a0a 100%);color:#f0ece4;fo
 </div>
 <script>
 var IMGS=['${IMG1}','${IMG2}','${IMG3}'];
-var VIDS={6:'45973012250703',7:'45973012316239',8:'45973012349007',9:'45973017002063',11:'45973017034831'};
-var SHOP='https://fusionprime.in';
+var FUSION_CHECKOUT='${FUSION_CHECKOUT}';
 var RV=${JSON.stringify(REVIEWS)};
 var mrps={6:3999,7:3999,8:3999,9:3999,11:5499};
 var pop={8:" (Most Popular)",11:" (Biggest Size)"};
@@ -357,7 +348,7 @@ function switchImg(t,idx){
   imgIdx=idx;
   document.getElementById('mainImg').src=IMGS[idx];
 }
-function goToCheckout(){window.location.href=SHOP+'/cart/'+VIDS[cs]+':1'}
+function goToCheckout(){window.location.href=FUSION_CHECKOUT+'&size='+cs}
 function sh(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
 function rr(){
   var s=(pg-1)*PP,e=Math.min(s+PP,RV.length),h='';

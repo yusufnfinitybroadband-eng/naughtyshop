@@ -8,8 +8,15 @@ const IMG2 = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Image_2.web
 const IMG3 = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Image_3.webp?v=1782295393";
 const LOGO = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Logo_9b05c0db-95d9-4ad1-89e5-1682f42a98c1.png?v=1782295395";
 const BANNER = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/banner2.png?v=1782295395";
-const SHOP = "p91iux-zw.myshopify.com";
-const CHECKOUT_BASE = `https://fusionprime.in/apps/fusion/checkout?source=naughtyshop&shop=${SHOP}`;
+
+// Shopify variant IDs
+const VARIANT_IDS = {
+  6: "45973012250703",
+  7: "45973012316239",
+  8: "45973012349007",
+  9: "45973017002063",
+  11: "45973017034831"
+};
 
 const REVIEWS = [
   {name:"Rahul Sharma",rating:5,verified:true,text:"Bhai ekdum mast product hai, delivery bhi bahut fast thi. Packaging bilkul plain thi. Highly recommend karta hun!",time:"2 din pehle"},

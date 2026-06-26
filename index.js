@@ -45,8 +45,10 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes popIn{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
 .spin-popup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(5px);animation:fadeInUp 0.5s ease}
 .spin-popup.show{display:flex}
+.spin-popup.hide{animation:fadeOut 0.5s ease forwards}
 .spin-container{background:linear-gradient(135deg,#1a0a0a,#2a0a0a);border:3px solid #ff0033;border-radius:20px;padding:40px;text-align:center;max-width:400px;animation:popIn 0.6s ease}
 .spin-title{font-size:28px;font-weight:900;color:#fff;margin-bottom:20px}
 .spin-wheel{width:280px;height:280px;margin:0 auto 30px;position:relative;cursor:pointer}
@@ -63,8 +65,6 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 .result-code{font-size:24px;font-weight:900;color:#4ade80;margin-bottom:10px;font-family:monospace;letter-spacing:2px}
 .copy-btn{width:100%;padding:10px;background:#4ade80;color:#000;border:none;font-weight:800;cursor:pointer;border-radius:6px;margin-top:10px}
 .copy-btn:hover{background:#22c55e}
-.close-popup{position:absolute;top:20px;right:20px;width:30px;height:30px;background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:24px;cursor:pointer;border-radius:50%;transition:all 0.3s}
-.close-popup:hover{background:#ff0033}
 
 .nav{background:rgba(8,8,8,0.98);padding:16px 24px;border-bottom:1px solid rgba(192,0,26,0.3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .nav-logo{height:40px;object-fit:contain}
@@ -146,7 +146,6 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 
 <div class="spin-popup" id="sp">
   <div class="spin-container">
-    <button class="close-popup" onclick="closeSpin()">✕</button>
     <div class="spin-title">🎁 Try Your Luck!</div>
     <div class="spin-pointer"></div>
     <div class="spin-wheel" id="sw">
@@ -155,11 +154,7 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
     </div>
     <div class="spin-text">Spin the wheel & get instant discount!</div>
     <button class="spin-btn" id="sb" onclick="spinWheel()">SPIN NOW</button>
-    <div class="spin-result" id="sr">
-      <div style="font-size:14px;color:rgba(240,236,228,0.6);margin-bottom:10px">🎉 You Won!</div>
-      <div class="result-code" id="rc">HAPPY2026</div>
-      <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
-    </div>
+    <div class="spin-result" id="sr"></div>
   </div>
 </div>
 
@@ -338,16 +333,14 @@ function spinWheel(){
     spun=true;
     spinCount++;
     localStorage.setItem('spinCount',spinCount);
-    btn.textContent='Already Spun!';
-    btn.disabled=true;
     var sr=document.getElementById('sr');
     sr.classList.add('show');
     if(spinCount%20===0){
-      document.getElementById('rc').textContent='HAPPY2026';
       sr.innerHTML='<div style="font-size:14px;color:rgba(240,236,228,0.6);margin-bottom:10px">🎉 Congratulations!</div><div class="result-code">HAPPY2026</div><button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>';
     }else{
       sr.innerHTML='<div style="font-size:14px;color:rgba(240,236,228,0.6)">You won a spin! Come back at '+((21-spinCount%20)+spinCount)+'th spin</div>';
     }
+    setTimeout(function(){closeSpin()},2000);
   },4000);
 }
 function copyCode(){
@@ -355,7 +348,9 @@ function copyCode(){
   alert('Code copied! ✅');
 }
 function closeSpin(){
-  if(!spun){document.getElementById('sp').classList.remove('show')}
+  var popup=document.getElementById('sp');
+  popup.classList.add('hide');
+  setTimeout(function(){popup.classList.remove('show','hide')},500);
 }
 function goCheckout(){window.location.href='${FUSION_CHECKOUT}?source=naughtyshop&shop=p91iux-zw.myshopify.com&size='+cs+'&price='+cp}
 

@@ -5,15 +5,34 @@ const PORT = process.env.PORT || 3000;
 const LOGO   = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/Your_Privacy._Our_Priority._1200_x_400_px.png?v=1786611605";
 const BANNER = "https://cdn.shopify.com/s/files/1/0661/7953/0831/files/banner2.png?v=1782295395";
 const SHOP   = "p91iux-zw.myshopify.com";
-const WELLNESS_API      = "https://fusionprime.in/apps/fusion/wellness-products?shop=" + SHOP;
-const FUSION_CHECKOUT   = "https://fusionprime.in/apps/fusion/checkout";
+const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout";
 
+// ─── Fetch products directly from Shopify public storefront JSON, filter by "wellness" tag ──
 async function fetchWellnessProducts() {
   try {
-    const res = await fetch(WELLNESS_API, { headers: { "Accept": "application/json" } });
+    const res = await fetch(`https://${SHOP}/products.json?limit=250`, { headers: { "Accept": "application/json" } });
     if (!res.ok) return [];
     const data = await res.json();
-    return data.products || [];
+
+    return (data.products || [])
+      .filter(p => (p.tags || []).map(t => String(t).toLowerCase()).includes("wellness"))
+      .map(p => {
+        const v         = p.variants?.[0] || {};
+        const price     = parseFloat(v.price || 0);
+        const compareAt = parseFloat(v.compare_at_price || 0);
+        const discount  = (compareAt > price && compareAt > 0) ? Math.round((1 - price / compareAt) * 100) : 0;
+        return {
+          id:             p.id,
+          title:          p.title || "",
+          image:          p.images?.[0]?.src || "",
+          variantId:      String(v.id || ""),
+          variantTitle:   v.title && v.title !== "Default Title" ? v.title : "",
+          price,
+          compareAtPrice: compareAt,
+          discountPct:    discount,
+        };
+      })
+      .filter(p => p.variantId && p.price > 0);
   } catch (e) {
     console.error("Wellness fetch failed:", e);
     return [];
@@ -56,9 +75,8 @@ function getPageHTML(products) {
 html{scroll-behavior:smooth}
 body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-height:1.6;overflow-x:hidden}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideInRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(255,0,51,0.15)}50%{box-shadow:0 0 35px rgba(255,0,51,0.3)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 .nav{background:rgba(8,8,8,0.98);backdrop-filter:blur(10px);padding:16px 24px;border-bottom:1px solid rgba(192,0,26,0.3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .nav-logo{height:38px;object-fit:contain}
@@ -110,7 +128,6 @@ body{background:#0a0a0a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 
 .loading-overlay{position:fixed;inset:0;background:rgba(10,10,10,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
 .loading-spinner{width:48px;height:48px;border-radius:50%;border:4px solid rgba(255,0,51,0.2);border-top-color:#ff0033;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 .loading-overlay p{margin-top:14px;font-size:13px;color:rgba(240,236,228,0.6)}
 
 @media(max-width:768px){

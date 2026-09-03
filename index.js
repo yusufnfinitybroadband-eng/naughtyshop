@@ -8,6 +8,10 @@ const SHOP   = "p91iux-zw.myshopify.com";
 const WELLNESS_API    = "https://fusionprime.in/apps/fusion/wellness-products?shop=" + SHOP;
 const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout";
 
+// ─── Must match WELLNESS_DISCOUNT_MULT in Fusion Prime's proxy.create-order.jsx ──
+// so the price shown here is exactly what gets charged at checkout for Prepaid.
+const PREPAID_DISCOUNT_MULT = 0.54; // 46% off
+
 const TESTIMONIALS = [
   { name: "R.K.", text: "Packaging bilkul plain thi, ghar walo ko kuch pata nahi chala. Product bhi genuine tha.", rating: 5 },
   { name: "A.S.", text: "Fast delivery aur COD ka option — full trust ban gaya. Highly recommend.", rating: 5 },
@@ -27,22 +31,45 @@ async function fetchWellnessProducts() {
   }
 }
 
+// ─── Safely escape a string for use inside a single-quoted JS string
+// literal that itself sits inside a double-quoted HTML attribute.
+// Fixes titles/variants containing " (e.g. 8" inch sizes) breaking onclick.
+function escForOnclick(str) {
+  return String(str || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, ' ');
+}
+
 function productCardHTML(p, idx) {
-  const hasDiscount = p.discountPct > 0;
+  const hasCompareDiscount = p.discountPct > 0;
+  const prepaidPrice = Math.round(p.price * PREPAID_DISCOUNT_MULT);
+  const safeTitle   = escForOnclick(p.title);
+  const safeVariant = escForOnclick(p.variantTitle);
+  const safeImage   = escForOnclick(p.image);
+
   return `
-    <div class="p-card" style="animation-delay:${idx * 0.06}s" onclick="goCheckout('${p.variantId}',${p.price},'${(p.title||'').replace(/'/g,"\\'")}','${(p.variantTitle||'').replace(/'/g,"\\'")}','${p.image||''}')">
+    <div class="p-card" style="animation-delay:${idx * 0.06}s" onclick="goCheckout('${p.variantId}',${p.price},'${safeTitle}','${safeVariant}','${safeImage}')">
       <div class="p-img-wrap">
         <img class="p-img" src="${p.image || ''}" alt="${(p.title||'').replace(/"/g,'&quot;')}" loading="lazy" onerror="this.style.display='none'"/>
-        ${hasDiscount ? `<span class="p-badge">${p.discountPct}% OFF</span>` : ''}
+        <span class="p-badge">🔥 ONLINE OFFER</span>
         <div class="p-img-shine"></div>
       </div>
       <div class="p-info">
-        <div class="p-title">${p.title}</div>
-        ${p.variantTitle ? `<div class="p-variant">${p.variantTitle}</div>` : ''}
-        <div class="p-price-row">
-          <span class="p-price">₹${p.price.toLocaleString('en-IN')}</span>
-          ${hasDiscount ? `<span class="p-old-price">₹${p.compareAtPrice.toLocaleString('en-IN')}</span>` : ''}
+        <div class="p-title">${(p.title||'').replace(/</g,'&lt;')}</div>
+        ${p.variantTitle ? `<div class="p-variant">${String(p.variantTitle).replace(/</g,'&lt;')}</div>` : ''}
+
+        <div class="p-offer-block">
+          <div class="p-offer-label">💳 Pay Online & Get</div>
+          <div class="p-offer-price">₹${prepaidPrice.toLocaleString('en-IN')}</div>
         </div>
+
+        <div class="p-price-meta">
+          ${hasCompareDiscount ? `<span class="p-old-price">₹${p.compareAtPrice.toLocaleString('en-IN')}</span>` : ''}
+          <span class="p-cod-price">🚚 COD Price: ₹${p.price.toLocaleString('en-IN')}</span>
+        </div>
+
         <button class="p-buy-btn">🛒 Buy Now</button>
       </div>
     </div>
@@ -115,13 +142,19 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 .p-card:hover .p-img{transform:scale(1.08)}
 .p-img-shine{position:absolute;top:0;left:0;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);opacity:0;pointer-events:none}
 .p-card:hover .p-img-shine{opacity:1;animation:shine 1s ease}
-.p-badge{position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#ff0033,#a3001f);color:#fff;font-size:11px;font-weight:800;padding:5px 11px;border-radius:20px;box-shadow:0 4px 14px rgba(255,0,51,0.5)}
+.p-badge{position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#ff0033,#a3001f);color:#fff;font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:20px;box-shadow:0 4px 14px rgba(255,0,51,0.5);letter-spacing:0.3px}
 .p-info{padding:16px}
 .p-title{font-size:14.5px;font-weight:700;color:#fff;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .p-variant{font-size:11px;color:rgba(240,236,228,0.4);margin-bottom:10px}
-.p-price-row{display:flex;align-items:baseline;gap:9px;margin-bottom:14px}
-.p-price{font-size:20px;font-weight:900;background:linear-gradient(135deg,#fff,#ffd9de);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.p-old-price{font-size:12px;color:rgba(240,236,228,0.3);text-decoration:line-through}
+
+.p-offer-block{background:linear-gradient(135deg,rgba(255,0,51,0.15),rgba(163,0,31,0.08));border:1.5px solid rgba(255,0,51,0.4);border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:center}
+.p-offer-label{font-size:10.5px;font-weight:700;color:#ff8fa3;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px}
+.p-offer-price{font-size:24px;font-weight:900;background:linear-gradient(135deg,#fff,#ffd9de);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+
+.p-price-meta{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.p-old-price{font-size:12px;color:rgba(240,236,228,0.35);text-decoration:line-through}
+.p-cod-price{font-size:11.5px;color:rgba(240,236,228,0.55);font-weight:600}
+
 .p-buy-btn{width:100%;padding:11px;background:linear-gradient(135deg,#ff0033,#a3001f);color:#fff;border:none;font-size:12px;font-weight:800;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:0.6px;transition:all 0.25s}
 .p-buy-btn:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(255,0,51,0.45)}
 
@@ -156,7 +189,7 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
   .product-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
   .p-info{padding:11px}
   .p-title{font-size:12.5px}
-  .p-price{font-size:16px}
+  .p-offer-price{font-size:19px}
   .p-buy-btn{padding:9px;font-size:11px}
   .section-header h2{font-size:22px}
   .blob1,.blob2{display:none}

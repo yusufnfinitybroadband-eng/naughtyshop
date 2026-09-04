@@ -8,6 +8,9 @@ const SHOP   = "p91iux-zw.myshopify.com";
 const WELLNESS_API    = "https://fusionprime.in/apps/fusion/wellness-products?shop=" + SHOP;
 const FUSION_CHECKOUT = "https://fusionprime.in/apps/fusion/checkout";
 
+// ─── Facebook Pixel (client-side base tracking) ────────────
+const FB_PIXEL_ID = "1987208335349377";
+
 // ─── Must match WELLNESS_DISCOUNT_MULT in Fusion Prime's proxy.create-order.jsx ──
 // so the price shown here is exactly what gets charged at checkout for Prepaid.
 const PREPAID_DISCOUNT_MULT = 0.54; // 46% off
@@ -96,6 +99,22 @@ function getPageHTML(products) {
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>NaughtyShop | Your Privacy. Our Priority.</title>
+
+<!-- ─── Facebook Pixel ─────────────────────────────────── -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${FB_PIXEL_ID}');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1"/>
+</noscript>
+<!-- ────────────────────────────────────────────────────── -->
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -284,6 +303,17 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 
 <script>
 function goCheckout(variantId, price, title, variantTitle, image) {
+  // ─── Facebook Pixel: track InitiateCheckout before redirect ──
+  if (typeof fbq === 'function') {
+    fbq('track', 'InitiateCheckout', {
+      value: price,
+      currency: 'INR',
+      content_type: 'product',
+      content_name: title,
+      content_ids: [String(variantId)]
+    });
+  }
+
   var overlay = document.createElement('div');
   overlay.className = 'loading-overlay';
   overlay.innerHTML = '<div class="loading-spinner"></div><p>Taking you to checkout...</p>';

@@ -53,14 +53,14 @@ function productCardHTML(p, idx) {
   const safeImage   = escForOnclick(p.image);
 
   return `
-    <div class="p-card" style="animation-delay:${idx * 0.06}s" onclick="goCheckout('${p.variantId}',${p.price},'${safeTitle}','${safeVariant}','${safeImage}')">
-      <div class="p-img-wrap">
+    <div class="p-card" style="animation-delay:${idx * 0.06}s">
+      <div class="p-img-wrap" onclick="openQuickView(${idx})">
         <img class="p-img" src="${p.image || ''}" alt="${(p.title||'').replace(/"/g,'&quot;')}" loading="lazy" onerror="this.style.display='none'"/>
         <span class="p-badge">🔥 ONLINE OFFER</span>
         <div class="p-img-shine"></div>
       </div>
       <div class="p-info">
-        <div class="p-title">${(p.title||'').replace(/</g,'&lt;')}</div>
+        <div class="p-title" onclick="openQuickView(${idx})" style="cursor:pointer">${(p.title||'').replace(/</g,'&lt;')}</div>
         ${p.variantTitle ? `<div class="p-variant">${String(p.variantTitle).replace(/</g,'&lt;')}</div>` : ''}
 
         <div class="p-offer-block">
@@ -73,7 +73,7 @@ function productCardHTML(p, idx) {
           <span class="p-cod-price">🚚 COD Price: ₹${p.price.toLocaleString('en-IN')}</span>
         </div>
 
-        <button class="p-buy-btn">🛒 Buy Now</button>
+        <button class="p-buy-btn" onclick="event.stopPropagation();goCheckout('${p.variantId}',${p.price},'${safeTitle}','${safeVariant}','${safeImage}')">🛒 Buy Now</button>
       </div>
     </div>
   `;
@@ -93,6 +93,9 @@ function getPageHTML(products) {
   const productsGrid = products.length
     ? products.map(productCardHTML).join('')
     : `<div class="empty-state">🔒 New products dropping soon. Check back shortly.</div>`;
+
+  // Safe JSON for embedding in a <script> tag (escape closing tags)
+  const productsJSON = JSON.stringify(products).replace(/</g, '\\u003c');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -126,6 +129,7 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 @keyframes floatBlob{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.08)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes shine{0%{transform:translateX(-100%) rotate(20deg)}100%{transform:translateX(200%) rotate(20deg)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
 .bg-blob{position:fixed;border-radius:50%;filter:blur(90px);z-index:0;pointer-events:none;opacity:0.35}
 .blob1{width:420px;height:420px;background:#ff0033;top:-120px;left:-100px;animation:floatBlob 12s ease-in-out infinite}
@@ -154,9 +158,9 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 .section-header p{font-size:13px;color:rgba(240,236,228,0.5)}
 
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:22px}
-.p-card{background:linear-gradient(160deg,#141416,#0e0e10);border:1px solid rgba(255,0,51,0.15);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.35s cubic-bezier(.2,.8,.2,1);position:relative;opacity:0;animation:cardIn 0.6s ease forwards}
+.p-card{background:linear-gradient(160deg,#141416,#0e0e10);border:1px solid rgba(255,0,51,0.15);border-radius:16px;overflow:hidden;transition:all 0.35s cubic-bezier(.2,.8,.2,1);position:relative;opacity:0;animation:cardIn 0.6s ease forwards}
 .p-card:hover{transform:translateY(-8px);border-color:rgba(255,0,51,0.55);animation:cardIn 0.6s ease forwards,pulseGlow 1.6s ease infinite}
-.p-img-wrap{position:relative;aspect-ratio:1/1;background:#1a1a1c;overflow:hidden}
+.p-img-wrap{position:relative;aspect-ratio:1/1;background:#1a1a1c;overflow:hidden;cursor:pointer}
 .p-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease}
 .p-card:hover .p-img{transform:scale(1.08)}
 .p-img-shine{position:absolute;top:0;left:0;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);opacity:0;pointer-events:none}
@@ -199,6 +203,32 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
 .loading-overlay{position:fixed;inset:0;background:rgba(8,8,10,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
 .loading-spinner{width:50px;height:50px;border-radius:50%;border:4px solid rgba(255,0,51,0.2);border-top-color:#ff0033;animation:spin 0.8s linear infinite}
 .loading-overlay p{margin-top:16px;font-size:13px;color:rgba(240,236,228,0.6)}
+
+/* ─── Quick View Modal ────────────────────────────────── */
+.qv-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.qv-overlay.show{display:flex}
+.qv-sheet{background:#111113;border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(.2,.8,.2,1)}
+.qv-overlay.show .qv-sheet{transform:translateY(0)}
+.qv-close-row{display:flex;justify-content:flex-end;padding:14px 16px 0;position:sticky;top:0;background:#111113;z-index:1}
+.qv-close-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:18px;cursor:pointer}
+.qv-gallery-main{width:100%;aspect-ratio:1;object-fit:cover;background:#1a1a1c;display:block}
+.qv-thumbs{display:flex;gap:8px;padding:10px 16px;overflow-x:auto}
+.qv-thumbs::-webkit-scrollbar{display:none}
+.qv-thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;flex-shrink:0;opacity:0.6}
+.qv-thumb.active{border-color:#ff0033;opacity:1}
+.qv-content{padding:6px 20px 24px}
+.qv-title{font-size:19px;font-weight:800;color:#fff;line-height:1.35;margin-bottom:6px}
+.qv-variant{font-size:12px;color:rgba(240,236,228,0.45);margin-bottom:14px}
+.qv-offer-block{background:linear-gradient(135deg,rgba(255,0,51,0.15),rgba(163,0,31,0.08));border:1.5px solid rgba(255,0,51,0.4);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center}
+.qv-offer-label{font-size:11px;font-weight:700;color:#ff8fa3;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px}
+.qv-offer-price{font-size:30px;font-weight:900;background:linear-gradient(135deg,#fff,#ffd9de);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.qv-price-meta{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.qv-old-price{font-size:13px;color:rgba(240,236,228,0.35);text-decoration:line-through}
+.qv-cod-price{font-size:12.5px;color:rgba(240,236,228,0.6);font-weight:600}
+.qv-desc-title{font-size:12px;font-weight:700;color:rgba(240,236,228,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.qv-desc{font-size:13.5px;color:rgba(240,236,228,0.75);line-height:1.7;margin-bottom:22px}
+.qv-buy-btn{width:100%;padding:15px;background:linear-gradient(135deg,#ff0033,#a3001f);color:#fff;border:none;font-size:14px;font-weight:800;border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:0.6px}
+.qv-buy-btn:hover{box-shadow:0 6px 20px rgba(255,0,51,0.45)}
 
 @media(max-width:768px){
   .hero{min-height:340px}
@@ -301,7 +331,81 @@ body{background:#08080a;color:#f0ece4;font-family:'Segoe UI',sans-serif;line-hei
   © 2025 NaughtyShop • 🔒 100% Private & Secure
 </div>
 
+<!-- ─── Quick View Modal ───────────────────────────────── -->
+<div class="qv-overlay" id="qvOverlay" onclick="closeQuickViewOnOverlay(event)">
+  <div class="qv-sheet">
+    <div class="qv-close-row"><button class="qv-close-btn" onclick="closeQuickView()">✕</button></div>
+    <img class="qv-gallery-main" id="qvMainImg" src="" alt=""/>
+    <div class="qv-thumbs" id="qvThumbs"></div>
+    <div class="qv-content">
+      <div class="qv-title" id="qvTitle"></div>
+      <div class="qv-variant" id="qvVariant"></div>
+
+      <div class="qv-offer-block">
+        <div class="qv-offer-label">💳 Pay Online & Get</div>
+        <div class="qv-offer-price" id="qvOfferPrice"></div>
+      </div>
+      <div class="qv-price-meta">
+        <span class="qv-old-price" id="qvOldPrice"></span>
+        <span class="qv-cod-price" id="qvCodPrice"></span>
+      </div>
+
+      <div class="qv-desc-title">Product Details</div>
+      <div class="qv-desc" id="qvDesc"></div>
+
+      <button class="qv-buy-btn" id="qvBuyBtn">🛒 Buy Now</button>
+    </div>
+  </div>
+</div>
+
 <script>
+const PRODUCTS = ${productsJSON};
+
+function openQuickView(idx) {
+  const p = PRODUCTS[idx];
+  if (!p) return;
+  const imgs = (p.images && p.images.length) ? p.images : [p.image];
+  document.getElementById('qvMainImg').src = imgs[0] || '';
+  const thumbs = document.getElementById('qvThumbs');
+  thumbs.innerHTML = imgs.length > 1 ? imgs.map((src, i) =>
+    '<img class="qv-thumb' + (i === 0 ? ' active' : '') + '" src="' + src + '" onclick="setQvMainImg(this,\\'' + src + '\\')"/>'
+  ).join('') : '';
+
+  document.getElementById('qvTitle').textContent = p.title;
+  document.getElementById('qvVariant').textContent = p.variantTitle || '';
+
+  const prepaidPrice = Math.round(p.price * ${PREPAID_DISCOUNT_MULT});
+  document.getElementById('qvOfferPrice').textContent = '₹' + prepaidPrice.toLocaleString('en-IN');
+  document.getElementById('qvCodPrice').textContent = '🚚 COD Price: ₹' + p.price.toLocaleString('en-IN');
+  const oldEl = document.getElementById('qvOldPrice');
+  if (p.discountPct > 0) { oldEl.textContent = '₹' + p.compareAtPrice.toLocaleString('en-IN'); oldEl.style.display = 'inline'; }
+  else { oldEl.style.display = 'none'; }
+
+  document.getElementById('qvDesc').textContent = p.desc || 'Premium quality wellness product, delivered discreetly.';
+
+  const buyBtn = document.getElementById('qvBuyBtn');
+  buyBtn.onclick = function() {
+    goCheckout(p.variantId, p.price, p.title, p.variantTitle || '', p.image || '');
+  };
+
+  document.getElementById('qvOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function setQvMainImg(thumb, src) {
+  document.getElementById('qvMainImg').src = src;
+  document.querySelectorAll('.qv-thumb').forEach(t => t.classList.remove('active'));
+  thumb.classList.add('active');
+}
+
+function closeQuickView() {
+  document.getElementById('qvOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function closeQuickViewOnOverlay(e) {
+  if (e.target === document.getElementById('qvOverlay')) closeQuickView();
+}
+
 function goCheckout(variantId, price, title, variantTitle, image) {
   // ─── Facebook Pixel: track InitiateCheckout before redirect ──
   if (typeof fbq === 'function') {
